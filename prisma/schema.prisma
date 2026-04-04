@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  STORE
+  USER
+}
+
+enum TransactionType {
+  PURCHASE
+  TOPUP
+}
+
+model User {
+  id           String        @id @default(cuid())
+  username     String        @unique
+  passwordHash String
+  role         Role
+  name         String?
+  createdAt    DateTime      @default(now())
+  wallet       Wallet?
+  cards        Card[]
+  transactions Transaction[]
+  ownerStore   Store?        @relation("StoreOwner")
+}
+
+model Store {
+  id                  String        @id @default(cuid())
+  name                String
+  defaultChargeAmount Int
+  ownerUserId         String        @unique
+  createdAt           DateTime      @default(now())
+  ownerUser           User          @relation("StoreOwner", fields: [ownerUserId], references: [id], onDelete: Cascade)
+  transactions        Transaction[]
+}
+
+model Card {
+  uid       String   @id
+  userId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Wallet {
+  userId    String   @id
+  balance   Int      @default(0)
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Transaction {
+  id             String          @id @default(cuid())
+  type           TransactionType
+  amount         Int
+  userId         String
+  storeId        String?
+  createdAt      DateTime        @default(now())
+  idempotencyKey String?         @unique
+  note           String?
+  balanceBefore  Int?
+  balanceAfter   Int?
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store          Store?          @relation(fields: [storeId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([storeId, createdAt])
+  @@index([type, createdAt])
+}
