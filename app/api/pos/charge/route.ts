@@ -9,7 +9,7 @@ const chargeSchema = z.object({
   uid: z.string().trim().min(1, "UID is required"),
 });
 
-const FIXED_TAP_CHARGE_MMK = 3500;
+
 
 function formatChargeResponse(params: {
   txId: string;
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
       }
 
       const balanceBefore = wallet.balance;
-      const amount = FIXED_TAP_CHARGE_MMK;
+      const amount = store.defaultChargeAmount;
 
       if (balanceBefore < amount) {
         throw new RouteError(400, "INSUFFICIENT_BALANCE", "Insufficient balance");

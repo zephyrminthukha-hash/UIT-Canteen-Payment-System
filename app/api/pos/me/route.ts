@@ -3,7 +3,7 @@ import { requireRole } from "@/lib/server/auth/guard";
 import { db } from "@/lib/server/db";
 import { handleRouteError, RouteError } from "@/lib/server/http";
 
-const FIXED_TAP_CHARGE_MMK = 3500;
+
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     return Response.json({
       storeId: store.id,
       storeName: store.name,
-      defaultChargeAmount: FIXED_TAP_CHARGE_MMK,
+      defaultChargeAmount: store.defaultChargeAmount,
     });
   } catch (error) {
     return handleRouteError(error);
