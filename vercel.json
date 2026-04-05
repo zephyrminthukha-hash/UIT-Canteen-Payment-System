@@ -4,14 +4,7 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "regions": ["sin1"],
-  "env": {
-    "DATABASE_URL": {
-      "description": "PostgreSQL connection string from Vercel Postgres or external provider"
-    },
-    "JWT_SECRET": {
-      "description": "Secret key for JWT token generation (minimum 32 characters)"
-    }
-  },
+  "env": {},
   "build": {
     "env": {
       "PRISMA_GENERATE_DATAPROXY": "true"
